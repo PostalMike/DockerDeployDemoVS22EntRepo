@@ -49,7 +49,7 @@ jobs:
 
         - uses: azure/aks-set-context@v1
           with:
-              creds: '${{ secrets.AZURE_CREDENTIALS }}'
+              creds: '${{ secrets.AZURE_CREDENTIALS_DEMO }}'
               cluster-name: ${{ secrets.AKS_NAME_DEMO }}
               resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
 
