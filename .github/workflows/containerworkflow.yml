@@ -24,8 +24,7 @@ jobs:
             username: ${{ secrets.SERVICE_PRINCIPAL_ID_DEMO }}
             password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD_DEMO }}
 
-        - run: docker build . -t ${{ env.IMAGE_NAME }}
-        #--file DockerDeployDemoVS22Ent/Dockerfile --tag ${{ env.IMAGE_NAME }} . 
+        - run: docker build --file DockerDeployDemoVS22Ent/Dockerfile --tag ${{ env.IMAGE_NAME }} . 
         # The command below is from the course, the one above is what Turing 85 from
         # Stack Overflow provided.  His code works.
         # . -t ${{ env.IMAGE_NAME }}
