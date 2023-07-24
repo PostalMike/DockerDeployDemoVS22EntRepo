@@ -24,56 +24,52 @@ jobs:
             username: ${{ secrets.SERVICE_PRINCIPAL_ID_DEMO }}
             password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD_DEMO }}
 
-        - run: docker build --file DockerDeployDemoVS22Ent/Dockerfile --tag ${{ env.IMAGE_NAME }} . 
-        # The command below is from the course, the one above is what Turing 85 from
-        # Stack Overflow provided.  His code works.
-        # . -t ${{ env.IMAGE_NAME }}
+        - run: docker build . -t ${{ env.IMAGE_NAME }}
         - run: docker push ${{ env.IMAGE_NAME }}
     
     deploy-to-aks:
-        
-        runs-on: ubuntu-latest
+      
+      runs-on: ubuntu-latest
+      
+      if: github.ref == 'refs/heads/master'
 
-        if: github.ref == 'refs/heads/master'
-
-        needs: build-deploy-image
-
-        #env:
-            #NAMESPACE: dummy
-        
-        steps:
+      needs: build-deploy-image
+          
+      #env:
+        #NAMESPACE: dummy
+      
+      steps:
+      
+      - uses: actions/checkout@main
+      
+      # Set the target Azure Kubernetes Service (AKS) cluster. 
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: ${{ secrets.AKS_NAME_DEMO }}
+          resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
     
-        - uses: actions/checkout@main
-  
-        # Set the target Azure Kubernetes Service (AKS) cluster-
-
-        - uses: azure/aks-set-context@v1
-          with:
-              creds: '${{ secrets.AZURE_CREDENTIALS_DEMO }}'
-              cluster-name: ${{ secrets.AKS_NAME_DEMO }}
-              resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
-
-        # Create namespace if doesn't exist
-        # - run: |
-        #      kubectl create namespace ${{ env.NAMESPACE  }} --dry-run -o json | kubectl apply -f -
-
-        # Create image pull secret for - ACR
-        - uses: azure/k8s-create-secret@v1
-          with: 
-              container-registry-url: ${{ env.ACR_LOGON_SERVER }}
-              container-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID_DEMO }}
-              container-registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD_DEMO }}
-              secret-name: ${{ secrets.AKS_SECRET }}
-              # namespace: ${{ env.NAMESPACE }}
-
-        # Deploy app to AKS
-        - uses: azure/k8s-deploy@v1
-          with:
-              manifests: |
-                  manefests/deployment.yml
-                  manifests/service.yml
-              images: |
-                 ${{ env.IMAGE_NAME }}
-              imagepullsecrets: |
-                 ${{ secrets.AKS_SECRET }}
-              #namespace: ${{ env.NAMESPACE }}
+      # Create namespace if doesn't exist
+      # - run: |
+      #    kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+    
+      # Create image pull secret for ACR
+      - uses: azure/k8s-create-secret@v1
+        with:
+          container-registry-url: ${{ env.ACR_LOGON_SERVER }}
+          container-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID_DEMO }}
+          container-registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD_DEMO }}
+          secret-name: ${{ secrets.AKS_SECRET }}
+          # namespace: ${{ env.NAMESPACE }}
+    
+      # Deploy app to AKS
+      - uses: azure/k8s-deploy@v1
+        with:
+          manifests: |
+            manifests/deployment.yml
+            manifests/service.yml
+          images: |
+            ${{ env.IMAGE_NAME }}
+          imagepullsecrets: |
+            ${{ secrets.AKS_SECRET }}
+          #namespace: ${{ env.NAMESPACE }}
