@@ -20,10 +20,10 @@ spec:
                    image: acr01yournametechconf2023.azurecr.io/webapp:v1
                    imagePullPolicy: IfNotPresent
                    ports:
-                       - containerPort: 80
-                          protocol: TCP
+                      - containerPort: 80
+                         protocol: TCP
                    env:
-                       - name: ASPNETCORE_URLS
-                         value: http://+:80
-                       - name: WebApiBaseAddress
-                          value: http://webapi
+                      - name: ASPNETCORE_URLS
+                        value: http://+:80
+                      - name: WebApiBaseAddress
+                         value: http://webapi
