@@ -36,11 +36,9 @@ jobs:
         if: github.ref == 'refs/heads/master'
 
         needs: build-deploy-image
-
-        environment: PROD          
-
-       #env:
-         #NAMESPACE: dummy
+          
+        #env:
+          #NAMESPACE: dummy
       
         steps:
       
@@ -57,23 +55,23 @@ jobs:
         # - run: |
         #    kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
     
-      # Create image pull secret for ACR
+        # Create image pull secret for ACR
         - uses: azure/k8s-create-secret@v1
           with:
             container-registry-url: ${{ env.ACR_LOGON_SERVER }}
             container-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID_DEMO }}
             container-registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD_DEMO }}
             secret-name: ${{ secrets.AKS_SECRET }}
-             # namespace: ${{ env.NAMESPACE }}
+            # namespace: ${{ env.NAMESPACE }}
     
-       # Deploy app to AKS
+        # Deploy app to AKS
         - uses: azure/k8s-deploy@v1
           with:
             manifests: |
-             manifests/deployment.yml
-             manifests/service.yml
+              manifests/deployment.yml
+              manifests/service.yml
             images: |
               ${{ env.IMAGE_NAME }}
             imagepullsecrets: |
               ${{ secrets.AKS_SECRET }}
-          #namespace: ${{ env.NAMESPACE }}
+            #namespace: ${{ env.NAMESPACE }}
