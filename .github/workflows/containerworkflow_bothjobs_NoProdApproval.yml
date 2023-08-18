@@ -1,5 +1,5 @@
 # comment removed, this makes a change we can     commit.
-name: Container Workflow
+name: Container Workflow Both Jobs No Prod Approval
 on:
   #comment out push because we have a file that only runs job 1, will queue this also
   #push:
