@@ -1,7 +1,8 @@
 # comment removed, this makes a change we can     commit.
 name: Container Workflow
 on:
-  push:
+  #comment out push because we have a file that only runs job 1, will queue this also
+  #push:
   workflow_dispatch:
 
 env:
